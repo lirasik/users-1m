@@ -1,0 +1,61 @@
+.app-container {
+  display: flex;
+}
+
+.user-list {
+  border-right: 1px solid #000;
+  overflow-y: auto;
+}
+
+.user-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.user-item p {
+  margin: 0;
+  padding: 0;
+}
+
+.user-item:hover {
+  background: #084fe9;
+  transition: color 0.2s ease-in-out;
+}
+
+.user-details {
+  padding: 20px;
+  width: 100%;
+}
+
+.user-details .fullName {
+  display: flex;
+  gap: 20px;
+}
+
+.user-details .fullName .name,
+.user-details .fullName .surname {
+  width: 100%;
+  max-width: 394px;
+}
+
+.user-details .fullName .name input,
+.user-details .fullName .surname input {
+  max-width: 374px;
+}
+
+input {
+  display: block;
+  margin-bottom: 10px;
+  padding: 8px;
+  width: 100%;
+  max-width: 788px;
+}
+
+button {
+  border-radius: 10px;
+  padding: 10px;
+  background: blue;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
