@@ -11,12 +11,10 @@
   padding: 10px;
   cursor: pointer;
 }
-
 .user-item p {
   margin: 0;
   padding: 0;
 }
-
 .user-item:hover {
   background: #084fe9;
   transition: color 0.2s ease-in-out;
@@ -26,20 +24,17 @@
   padding: 20px;
   width: 100%;
 }
-
 .user-details .fullName {
   display: flex;
   gap: 20px;
 }
-
-.user-details .fullName .name,
-.user-details .fullName .surname {
+.user-details .surname,
+.user-details .name {
   width: 100%;
   max-width: 394px;
 }
-
-.user-details .fullName .name input,
-.user-details .fullName .surname input {
+.user-details .surname input,
+.user-details .name input {
   max-width: 374px;
 }
 
@@ -58,4 +53,4 @@ button {
   color: #fff;
   border: none;
   cursor: pointer;
-}
+}/*# sourceMappingURL=styles.css.map */

@@ -3,7 +3,7 @@ import { FixedSizeList as List } from "react-window";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { faker } from "@faker-js/faker/locale/en";
-import "./styles.css";
+import "../components/MyComponents/styles.scss";
 
 const generateUsers = (count) => {
   return Array.from({ length: count }, (_, id) => ({
@@ -46,9 +46,11 @@ const UserList = ({ onSelect }) => {
           style={{
             ...style,
             height: "auto",
+            display: "flex",
           }}
           onClick={() => onSelect(users[index])}
         >
+          <img src="../assets/user-icon.svg" alt="User Icon" />
           <p style={{ margin: 0 }}>
             {users[index].name} {users[index].surname}
           </p>
