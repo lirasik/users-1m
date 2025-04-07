@@ -10,12 +10,20 @@
 .user-item {
   padding: 10px;
   cursor: pointer;
+  gap: 10px;
+  height: auto;
+  display: flex;
+  align-items: center;
   p {
     margin: 0;
     padding: 0;
   }
+  img {
+    width: 25px;
+    height: 25px;
+  }
   &:hover {
-    background: #084fe9;
+    background: yellow;
     transition: color 0.2s ease-in-out;
   }
 }
@@ -23,7 +31,13 @@
 .user-details {
   padding: 20px;
   width: 100%;
-
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  img {
+    width: 100px;
+    height: 100px;
+  }
   .fullName {
     display: flex;
     gap: 20px;

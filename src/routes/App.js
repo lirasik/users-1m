@@ -4,6 +4,7 @@ import { Provider, useDispatch, useSelector } from "react-redux";
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { faker } from "@faker-js/faker/locale/en";
 import "../components/MyComponents/styles.scss";
+import userIcon from "../assets/user-icon.svg";
 
 const generateUsers = (count) => {
   return Array.from({ length: count }, (_, id) => ({
@@ -43,14 +44,10 @@ const UserList = ({ onSelect }) => {
         <div
           key={users[index].id}
           className="user-item"
-          style={{
-            ...style,
-            height: "auto",
-            display: "flex",
-          }}
+          style={{ ...style }}
           onClick={() => onSelect(users[index])}
         >
-          <img src="../assets/user-icon.svg" alt="User Icon" />
+          <img src={userIcon} alt="User Icon" />
           <p style={{ margin: 0 }}>
             {users[index].name} {users[index].surname}
           </p>
@@ -68,44 +65,47 @@ const UserDetails = ({ user, onSave }) => {
 
   return (
     <div className="user-details">
-      <div className="fullName">
-        <div className="name">
-          <label>Имя</label>
-          <input
-            type="text"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-          />
+      <img src={userIcon} alt="User Icon" />
+      <div>
+        <div className="fullName">
+          <div className="name">
+            <label>Имя</label>
+            <input
+              type="text"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+          </div>
+          <div className="surname">
+            <label>Фамилия</label>
+            <input
+              type="text"
+              value={form.surname}
+              onChange={(e) => setForm({ ...form, surname: e.target.value })}
+            />
+          </div>
         </div>
-        <div className="surname">
-          <label>Фамилия</label>
-          <input
-            type="text"
-            value={form.surname}
-            onChange={(e) => setForm({ ...form, surname: e.target.value })}
-          />
-        </div>
+        <label>Почта</label>
+        <input
+          type="text"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+        />
+        <label>Возвраст</label>
+        <input
+          type="text"
+          value={form.age}
+          onChange={(e) => setForm({ ...form, age: e.target.value })}
+        />
+        <button
+          onClick={() => {
+            dispatch(userSlice.actions.updateUser(form));
+            onSave();
+          }}
+        >
+          Сохранить
+        </button>
       </div>
-      <label>Почта</label>
-      <input
-        type="text"
-        value={form.email}
-        onChange={(e) => setForm({ ...form, email: e.target.value })}
-      />
-      <label>Возвраст</label>
-      <input
-        type="text"
-        value={form.age}
-        onChange={(e) => setForm({ ...form, age: e.target.value })}
-      />
-      <button
-        onClick={() => {
-          dispatch(userSlice.actions.updateUser(form));
-          onSave();
-        }}
-      >
-        Сохранить
-      </button>
     </div>
   );
 };
