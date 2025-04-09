@@ -97,7 +97,7 @@ const App = () => {
         }
         return response.json();
       })
-      .then((data) => setUsers(data)) // Устанавливаем пользователей в состояние
+      .then((data) => setUsers(data))
       .catch((error) => console.error("Ошибка загрузки пользователей:", error));
   }, []);
 
@@ -179,7 +179,7 @@ const App = () => {
 
   return (
     <div className="app-container">
-      <button onClick={handleAddUser} style={{ marginBottom: "10px" }}>
+      <button className="add-user" onClick={handleAddUser}>
         Добавить пользователя
       </button>
       <UserList users={users} onSelect={setSelectedUser} />

@@ -1,5 +1,13 @@
 .app-container {
+  position: relative;
   display: flex;
+  button {
+    margin: 10px;
+  }
+  .add-user {
+    position: absolute;
+    bottom: -70px;
+  }
 }
 
 .user-list {
