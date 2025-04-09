@@ -24,7 +24,7 @@ const generateUsers = (count) => {
 
 // Создаём пользователей один раз
 if (users.length === 0) {
-  users = generateUsers(10); // Генерируем 10 пользователей
+  users = generateUsers(10); // Генерируем 1 000 000 пользователей
 }
 
 // API для получения пользователей
