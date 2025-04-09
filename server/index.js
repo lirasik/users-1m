@@ -20,12 +20,6 @@ const generateUsers = (count) => {
   }));
 };
 
-// Каждый раз, когда мы получаем пользователей, мы генерируем их с новой строчки
-
-app.get("/api/users", (req, res) => {
-  res.send(`<pre>${JSON.stringify(users, null, 2)}</pre>`);
-});
-
 // Создаём пользователей один раз
 if (users.length === 0) {
   users = generateUsers(10); // Генерируем 10 пользователей
@@ -33,7 +27,7 @@ if (users.length === 0) {
 
 // API для получения пользователей
 app.get("/api/users", (req, res) => {
-  res.json(users);
+  res.json(users); // Возвращаем массив пользователей в формате JSON
 });
 
 // Обновление пользователя
@@ -59,6 +53,19 @@ app.post("/api/users", (req, res) => {
   users.push(newUser);
   console.log("Пользователь добавлен на сервере:", newUser);
   res.status(201).json(newUser);
+});
+
+// Удаление пользователя
+app.delete("/api/users/:id", (req, res) => {
+  const userId = parseInt(req.params.id, 10);
+  const userIndex = users.findIndex((user) => user.id === userId);
+
+  if (userIndex !== -1) {
+    users.splice(userIndex, 1); // Удаляем пользователя из массива
+    res.status(200).json({ message: "Пользователь удалён" });
+  } else {
+    res.status(404).json({ message: "Пользователь не найден" });
+  }
 });
 
 app.listen(PORT, () => {

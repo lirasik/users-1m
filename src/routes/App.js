@@ -31,7 +31,7 @@ const UserList = ({ users, onSelect }) => {
 };
 
 // Компонент для отображения деталей пользователя
-const UserDetails = ({ user, onSave }) => {
+const UserDetails = ({ user, onSave, onDelete }) => {
   const [form, setForm] = useState(user);
 
   // Обновляем форму, если выбранный пользователь изменился
@@ -72,6 +72,12 @@ const UserDetails = ({ user, onSave }) => {
           onChange={(e) => setForm({ ...form, age: e.target.value })}
         />
         <button onClick={() => onSave(form)}>Сохранить</button>
+        <button
+          onClick={() => onDelete(user.id)}
+          style={{ marginLeft: "10px", background: "red" }}
+        >
+          Удалить
+        </button>
       </div>
     </div>
   );
@@ -84,7 +90,7 @@ const App = () => {
 
   // Загружаем пользователей с сервера при первом рендере
   useEffect(() => {
-    fetch("http://localhost:5000/api/users") // Убедитесь, что сервер работает на этом порту
+    fetch("http://localhost:5000/api/users")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Ошибка загрузки пользователей");
@@ -98,7 +104,6 @@ const App = () => {
   // Сохранение пользователя (добавление или обновление)
   const handleSaveUser = (updatedUser) => {
     if (!updatedUser.id) {
-      // Если у пользователя нет id, это новый пользователь
       fetch("http://localhost:5000/api/users", {
         method: "POST",
         headers: {
@@ -113,14 +118,13 @@ const App = () => {
           return response.json();
         })
         .then((newUser) => {
-          setUsers((prevUsers) => [...prevUsers, newUser]); // Добавляем нового пользователя в состояние
-          setSelectedUser(null); // Закрываем форму после сохранения
+          setUsers((prevUsers) => [...prevUsers, newUser]);
+          setSelectedUser(null);
         })
         .catch((error) =>
           console.error("Ошибка добавления пользователя:", error)
         );
     } else {
-      // Если у пользователя есть id, это обновление
       fetch(`http://localhost:5000/api/users/${updatedUser.id}`, {
         method: "PUT",
         headers: {
@@ -139,13 +143,28 @@ const App = () => {
             prevUsers.map((user) =>
               user.id === savedUser.id ? savedUser : user
             )
-          ); // Обновляем пользователя в состоянии
-          setSelectedUser(null); // Закрываем форму после сохранения
+          );
+          setSelectedUser(null);
         })
         .catch((error) =>
           console.error("Ошибка сохранения пользователя:", error)
         );
     }
+  };
+
+  // Удаление пользователя
+  const handleDeleteUser = (userId) => {
+    fetch(`http://localhost:5000/api/users/${userId}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Ошибка при удалении пользователя");
+        }
+        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+        setSelectedUser(null); // Сбрасываем выделенного пользователя
+      })
+      .catch((error) => console.error("Ошибка удаления пользователя:", error));
   };
 
   // Открытие формы для добавления нового пользователя
@@ -165,7 +184,11 @@ const App = () => {
       </button>
       <UserList users={users} onSelect={setSelectedUser} />
       {selectedUser && (
-        <UserDetails user={selectedUser} onSave={handleSaveUser} />
+        <UserDetails
+          user={selectedUser}
+          onSave={handleSaveUser}
+          onDelete={handleDeleteUser}
+        />
       )}
     </div>
   );
