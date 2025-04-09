@@ -1,37 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FixedSizeList as List } from "react-window";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { configureStore, createSlice } from "@reduxjs/toolkit";
-import { faker } from "@faker-js/faker/locale/en";
 import "../components/MyComponents/styles.scss";
 import userIcon from "../assets/user-icon.svg";
 
-const generateUsers = (count) => {
-  return Array.from({ length: count }, (_, id) => ({
-    id,
-    name: faker.person.firstName(),
-    surname: faker.person.lastName(),
-    age: faker.number.int({ min: 18, max: 80 }),
-    email: faker.internet.email(),
-  }));
-};
-
-const userSlice = createSlice({
-  name: "users",
-  initialState: generateUsers(1000000),
-  reducers: {
-    updateUser: (state, action) => {
-      const index = state.findIndex((user) => user.id === action.payload.id);
-      if (index !== -1) state[index] = action.payload;
-    },
-  },
-});
-
-const store = configureStore({ reducer: { users: userSlice.reducer } });
-
-const UserList = ({ onSelect }) => {
-  const users = useSelector((state) => state.users);
-
+const UserList = ({ users, onSelect }) => {
   return (
     <List
       height={500}
@@ -59,7 +31,6 @@ const UserList = ({ onSelect }) => {
 
 const UserDetails = ({ user, onSave }) => {
   const [form, setForm] = useState(user);
-  const dispatch = useDispatch();
 
   useEffect(() => setForm(user), [user]);
 
@@ -91,40 +62,85 @@ const UserDetails = ({ user, onSave }) => {
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
-        <label>Возвраст</label>
+        <label>Возраст</label>
         <input
           type="text"
           value={form.age}
           onChange={(e) => setForm({ ...form, age: e.target.value })}
         />
-        <button
-          onClick={() => {
-            dispatch(userSlice.actions.updateUser(form));
-            onSave();
-          }}
-        >
-          Сохранить
-        </button>
+        <button onClick={() => onSave(form)}>Сохранить</button>
       </div>
     </div>
   );
 };
 
 const App = () => {
+  const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  useEffect(() => {
+    // Запрос к серверу для получения пользователей
+    fetch("http://localhost:5000/api/users")
+      .then((response) => response.json())
+      .then((data) => setUsers(data))
+      .catch((error) => console.error("Ошибка загрузки пользователей:", error));
+  }, []);
+
+  const handleSaveUser = (updatedUser) => {
+    // Если пользователь новый (не имеет id), добавляем его
+    if (!updatedUser.id) {
+      const newUser = { ...updatedUser, id: Date.now() }; // Генерируем уникальный id
+      setUsers((prevUsers) => [...prevUsers, newUser]);
+    } else {
+      // Отправляем обновлённые данные на сервер
+      fetch(`http://localhost:5000/api/users/${updatedUser.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedUser),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Ошибка при обновлении пользователя");
+          }
+          return response.json();
+        })
+        .then((savedUser) => {
+          // Обновляем пользователя в состоянии
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user.id === savedUser.id ? savedUser : user
+            )
+          );
+        })
+        .catch((error) =>
+          console.error("Ошибка сохранения пользователя:", error)
+        );
+    }
+    setSelectedUser(null); // Закрываем форму после сохранения
+  };
+
+  const handleAddUser = () => {
+    // Открываем форму для добавления нового пользователя
+    setSelectedUser({
+      name: "",
+      surname: "",
+      email: "",
+      age: "",
+    });
+  };
+
   return (
-    <Provider store={store}>
-      <div className="app-container">
-        <UserList onSelect={setSelectedUser} />
-        {selectedUser && (
-          <UserDetails
-            user={selectedUser}
-            onSave={() => setSelectedUser(null)}
-          />
-        )}
-      </div>
-    </Provider>
+    <div className="app-container">
+      <button onClick={handleAddUser} style={{ marginBottom: "10px" }}>
+        Добавить пользователя
+      </button>
+      <UserList users={users} onSelect={setSelectedUser} />
+      {selectedUser && (
+        <UserDetails user={selectedUser} onSave={handleSaveUser} />
+      )}
+    </div>
   );
 };
 

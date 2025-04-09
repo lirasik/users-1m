@@ -33,3 +33,20 @@ app.get("/api/users", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
+
+// Обновление пользователя
+
+app.use(express.json()); // Для обработки JSON в теле запроса
+
+app.put("/api/users/:id", (req, res) => {
+  const userId = parseInt(req.params.id, 10);
+  const updatedUser = req.body;
+
+  const userIndex = users.findIndex((user) => user.id === userId);
+  if (userIndex !== -1) {
+    users[userIndex] = { ...users[userIndex], ...updatedUser };
+    res.json(users[userIndex]);
+  } else {
+    res.status(404).json({ message: "Пользователь не найден" });
+  }
+});
