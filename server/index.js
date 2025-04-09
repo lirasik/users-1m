@@ -20,6 +20,12 @@ const generateUsers = (count) => {
   }));
 };
 
+// Каждый раз, когда мы получаем пользователей, мы генерируем их с новой строчки
+
+app.get("/api/users", (req, res) => {
+  res.send(`<pre>${JSON.stringify(users, null, 2)}</pre>`);
+});
+
 // Создаём пользователей один раз
 if (users.length === 0) {
   users = generateUsers(10); // Генерируем 10 пользователей
