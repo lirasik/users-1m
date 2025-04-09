@@ -1,4 +1,3 @@
-// filepath: /Users/antonsaverins/Documents/my trash/site/users-1m/user-editor/server/index.js
 const express = require("express");
 const { faker } = require("@faker-js/faker");
 const cors = require("cors");
@@ -7,12 +6,13 @@ const app = express();
 const PORT = 5000;
 
 app.use(cors());
+app.use(express.json()); // Для обработки JSON в теле запроса
 
 // Генерация пользователей
 let users = [];
 const generateUsers = (count) => {
-  return Array.from({ length: count }, (_, id) => ({
-    id,
+  return Array.from({ length: count }, (_, index) => ({
+    id: index + 1, // Начинаем с 1
     name: faker.person.firstName(),
     surname: faker.person.lastName(),
     age: faker.number.int({ min: 18, max: 80 }),
@@ -22,7 +22,7 @@ const generateUsers = (count) => {
 
 // Создаём пользователей один раз
 if (users.length === 0) {
-  users = generateUsers(1000000);
+  users = generateUsers(10); // Генерируем 10 пользователей
 }
 
 // API для получения пользователей
@@ -30,14 +30,7 @@ app.get("/api/users", (req, res) => {
   res.json(users);
 });
 
-app.listen(PORT, () => {
-  console.log(`Сервер запущен на http://localhost:${PORT}`);
-});
-
 // Обновление пользователя
-
-app.use(express.json()); // Для обработки JSON в теле запроса
-
 app.put("/api/users/:id", (req, res) => {
   const userId = parseInt(req.params.id, 10);
   const updatedUser = req.body;
@@ -49,4 +42,19 @@ app.put("/api/users/:id", (req, res) => {
   } else {
     res.status(404).json({ message: "Пользователь не найден" });
   }
+});
+
+// Добавление нового пользователя
+const { v4: uuidv4 } = require("uuid");
+
+app.post("/api/users", (req, res) => {
+  const newUser = req.body;
+  newUser.id = users.length + 1; // Присваиваем новый ID, начиная с 1
+  users.push(newUser);
+  console.log("Пользователь добавлен на сервере:", newUser);
+  res.status(201).json(newUser);
+});
+
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на http://localhost:${PORT}`);
 });

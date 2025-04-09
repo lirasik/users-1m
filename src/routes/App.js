@@ -3,6 +3,7 @@ import { FixedSizeList as List } from "react-window";
 import "../components/MyComponents/styles.scss";
 import userIcon from "../assets/user-icon.svg";
 
+// Компонент для отображения списка пользователей
 const UserList = ({ users, onSelect }) => {
   return (
     <List
@@ -14,10 +15,10 @@ const UserList = ({ users, onSelect }) => {
     >
       {({ index, style }) => (
         <div
-          key={users[index].id}
+          key={users[index].id} // Убедитесь, что у каждого пользователя есть уникальный id
           className="user-item"
           style={{ ...style }}
-          onClick={() => onSelect(users[index])}
+          onClick={() => onSelect(users[index])} // Выбор пользователя для редактирования
         >
           <img src={userIcon} alt="User Icon" />
           <p style={{ margin: 0 }}>
@@ -29,9 +30,11 @@ const UserList = ({ users, onSelect }) => {
   );
 };
 
+// Компонент для отображения деталей пользователя
 const UserDetails = ({ user, onSave }) => {
   const [form, setForm] = useState(user);
 
+  // Обновляем форму, если выбранный пользователь изменился
   useEffect(() => setForm(user), [user]);
 
   return (
@@ -74,25 +77,50 @@ const UserDetails = ({ user, onSave }) => {
   );
 };
 
+// Главный компонент приложения
 const App = () => {
-  const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [users, setUsers] = useState([]); // Состояние для хранения списка пользователей
+  const [selectedUser, setSelectedUser] = useState(null); // Состояние для выбранного пользователя
 
+  // Загружаем пользователей с сервера при первом рендере
   useEffect(() => {
-    // Запрос к серверу для получения пользователей
-    fetch("http://localhost:5000/api/users")
-      .then((response) => response.json())
-      .then((data) => setUsers(data))
+    fetch("http://localhost:5000/api/users") // Убедитесь, что сервер работает на этом порту
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Ошибка загрузки пользователей");
+        }
+        return response.json();
+      })
+      .then((data) => setUsers(data)) // Устанавливаем пользователей в состояние
       .catch((error) => console.error("Ошибка загрузки пользователей:", error));
   }, []);
 
+  // Сохранение пользователя (добавление или обновление)
   const handleSaveUser = (updatedUser) => {
-    // Если пользователь новый (не имеет id), добавляем его
     if (!updatedUser.id) {
-      const newUser = { ...updatedUser, id: Date.now() }; // Генерируем уникальный id
-      setUsers((prevUsers) => [...prevUsers, newUser]);
+      // Если у пользователя нет id, это новый пользователь
+      fetch("http://localhost:5000/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedUser),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Ошибка при добавлении пользователя");
+          }
+          return response.json();
+        })
+        .then((newUser) => {
+          setUsers((prevUsers) => [...prevUsers, newUser]); // Добавляем нового пользователя в состояние
+          setSelectedUser(null); // Закрываем форму после сохранения
+        })
+        .catch((error) =>
+          console.error("Ошибка добавления пользователя:", error)
+        );
     } else {
-      // Отправляем обновлённые данные на сервер
+      // Если у пользователя есть id, это обновление
       fetch(`http://localhost:5000/api/users/${updatedUser.id}`, {
         method: "PUT",
         headers: {
@@ -107,22 +135,21 @@ const App = () => {
           return response.json();
         })
         .then((savedUser) => {
-          // Обновляем пользователя в состоянии
           setUsers((prevUsers) =>
             prevUsers.map((user) =>
               user.id === savedUser.id ? savedUser : user
             )
-          );
+          ); // Обновляем пользователя в состоянии
+          setSelectedUser(null); // Закрываем форму после сохранения
         })
         .catch((error) =>
           console.error("Ошибка сохранения пользователя:", error)
         );
     }
-    setSelectedUser(null); // Закрываем форму после сохранения
   };
 
+  // Открытие формы для добавления нового пользователя
   const handleAddUser = () => {
-    // Открываем форму для добавления нового пользователя
     setSelectedUser({
       name: "",
       surname: "",
