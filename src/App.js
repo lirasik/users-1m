@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FixedSizeList as List } from "react-window";
-import "../components/MyComponents/styles.scss";
-import userIcon from "../assets/user-icon.svg";
+import "./components/MyComponents/styles.scss";
+import userIcon from "./assets/user-icon.svg";
 
 // Компонент для отображения списка пользователей
 const UserList = ({ users, onSelect }) => {
