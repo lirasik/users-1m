@@ -10,9 +10,11 @@ app.use(express.json()); // Для обработки JSON в теле запр�
 
 // Генерация пользователей
 let users = [];
+let nextId = 1; // Глобальный счётчик для уникальных ID
+
 const generateUsers = (count) => {
-  return Array.from({ length: count }, (_, index) => ({
-    id: index + 1, // Начинаем с 1
+  return Array.from({ length: count }, () => ({
+    id: nextId++, // Используем глобальный счётчик для ID
     name: faker.person.firstName(),
     surname: faker.person.lastName(),
     age: faker.number.int({ min: 18, max: 80 }),
@@ -45,12 +47,16 @@ app.put("/api/users/:id", (req, res) => {
 });
 
 // Добавление нового пользователя
-const { v4: uuidv4 } = require("uuid");
-
 app.post("/api/users", (req, res) => {
-  const newUser = req.body;
-  newUser.id = users.length + 1; // Присваиваем новый ID, начиная с 1
-  users.push(newUser);
+  const { name, surname, age, email } = req.body; // Извлекаем свойства в нужном порядке
+  const newUser = {
+    id: nextId++, // Используем глобальный счётчик для ID
+    name,
+    surname,
+    age,
+    email,
+  };
+  users.push(newUser); // Добавляем пользователя в массив
   console.log("Пользователь добавлен на сервере:", newUser);
   res.status(201).json(newUser);
 });
