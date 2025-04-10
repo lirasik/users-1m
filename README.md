@@ -13,7 +13,7 @@ You may also see any lint errors in the console.
 ### `node server/index.js`
 
 Runs the server.
-Open http://localhost:3000.
+Open http://localhost:5000.
 See list with all users http://localhost:5000/api/users.
 
 You may also see any lint errors in the console.
