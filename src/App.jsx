@@ -1,87 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { FixedSizeList as List } from "react-window";
 import "./components/MyComponents/styles.scss";
-import userIcon from "./assets/user-icon.svg";
 
-// Компонент для отображения списка пользователей
-const UserList = ({ users, onSelect }) => {
-  return (
-    <List
-      height={500}
-      width={300}
-      itemSize={50}
-      itemCount={users.length}
-      className="user-list"
-    >
-      {({ index, style }) => (
-        <div
-          key={users[index].id} // Убедитесь, что у каждого пользователя есть уникальный id
-          className="user-item"
-          style={{ ...style }}
-          onClick={() => onSelect(users[index])} // Выбор пользователя для редактирования
-        >
-          <img src={userIcon} alt="User Icon" />
-          <p style={{ margin: 0 }}>
-            {users[index].name} {users[index].surname}
-          </p>
-        </div>
-      )}
-    </List>
-  );
-};
+import UserList from "./components/MyComponents/UserList/UserList.jsx";
 
-// Компонент для отображения деталей пользователя
-const UserDetails = ({ user, onSave, onDelete }) => {
-  const [form, setForm] = useState(user);
-
-  // Обновляем форму, если выбранный пользователь изменился
-  useEffect(() => setForm(user), [user]);
-
-  return (
-    <div className="user-details">
-      <img src={userIcon} alt="User Icon" />
-      <div>
-        <div className="fullName">
-          <div className="name">
-            <label>Имя</label>
-            <input
-              type="text"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-          </div>
-          <div className="surname">
-            <label>Фамилия</label>
-            <input
-              type="text"
-              value={form.surname}
-              onChange={(e) => setForm({ ...form, surname: e.target.value })}
-            />
-          </div>
-        </div>
-        <label>Почта</label>
-        <input
-          type="text"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-        />
-        <label>Возраст</label>
-        <input
-          type="text"
-          value={form.age}
-          onChange={(e) => setForm({ ...form, age: e.target.value })}
-        />
-        <button onClick={() => onSave(form)}>Сохранить</button>
-        <button
-          onClick={() => onDelete(user.id)}
-          style={{ marginLeft: "10px", background: "red" }}
-        >
-          Удалить
-        </button>
-      </div>
-    </div>
-  );
-};
+import UserDetails from "./components/MyComponents/UserDetails/UserDatails.jsx";
 
 // Главный компонент приложения
 const App = () => {

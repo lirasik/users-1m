@@ -44,6 +44,8 @@
     ]
   },
   "devDependencies": {
+    "eslint": "^8.50.0",
+    "eslint-config-react-app": "^7.0.1",
     "sass": "^1.86.3"
   }
 }
