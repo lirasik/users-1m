@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FixedSizeList as List } from "react-window";
 import "./components/MyComponents/styles.scss";
 
 import UserList from "./components/MyComponents/UserList/UserList.jsx";
-
 import UserDetails from "./components/MyComponents/UserDetails/UserDatails.jsx";
 
 // Главный компонент приложения
@@ -11,9 +9,11 @@ const App = () => {
   const [users, setUsers] = useState([]); // Состояние для хранения списка пользователей
   const [selectedUser, setSelectedUser] = useState(null); // Состояние для выбранного пользователя
 
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Получаем URL из .env
+
   // Загружаем пользователей с сервера при первом рендере
   useEffect(() => {
-    fetch("http://localhost:5000/api/users")
+    fetch(`${API_BASE_URL}/users`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Ошибка загрузки пользователей");
@@ -22,12 +22,12 @@ const App = () => {
       })
       .then((data) => setUsers(data))
       .catch((error) => console.error("Ошибка загрузки пользователей:", error));
-  }, []);
+  }, [API_BASE_URL]);
 
   // Сохранение пользователя (добавление или обновление)
   const handleSaveUser = (updatedUser) => {
     if (!updatedUser.id) {
-      fetch("http://localhost:5000/api/users", {
+      fetch(`${API_BASE_URL}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +48,7 @@ const App = () => {
           console.error("Ошибка добавления пользователя:", error)
         );
     } else {
-      fetch(`http://localhost:5000/api/users/${updatedUser.id}`, {
+      fetch(`${API_BASE_URL}/users/${updatedUser.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -77,7 +77,7 @@ const App = () => {
 
   // Удаление пользователя
   const handleDeleteUser = (userId) => {
-    fetch(`http://localhost:5000/api/users/${userId}`, {
+    fetch(`${API_BASE_URL}/users/${userId}`, {
       method: "DELETE",
     })
       .then((response) => {
