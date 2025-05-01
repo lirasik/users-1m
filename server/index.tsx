@@ -22,9 +22,9 @@ const generateUsers = (count) => {
   }));
 };
 
-// Генерируем 100 пользователей
+// Генерируем 1 000 000 пользователей
 if (users.length === 0) {
-  users = generateUsers(100);
+  users = generateUsers(1000000);
 }
 
 // API для получения пользователей
