@@ -1,19 +1,27 @@
 import React, { useState, useEffect } from "react";
 import "./components/MyComponents/styles.scss";
 
-import UserList from "./components/MyComponents/UserList/UserList.jsx";
-import UserDetails from "./components/MyComponents/UserDetails/UserDatails.jsx";
+import UserList from "./components/MyComponents/UserList/UserList";
+import UserDetails from "./components/MyComponents/UserDetails/UserDatails";
 
 // Главный компонент приложения
 const App = () => {
-  const [users, setUsers] = useState([]); // Состояние для хранения списка пользователей
-  const [selectedUser, setSelectedUser] = useState(null); // Состояние для выбранного пользователя
+  const [users, setUsers] = useState<
+    { id: number; name: string; surname: string; email: string; age: number }[]
+  >([]); // Состояние для хранения списка пользователей
+  const [selectedUser, setSelectedUser] = useState<{
+    id?: number;
+    name: string;
+    surname: string;
+    email: string;
+    age: number;
+  } | null>(null); // Состояние для хранения выделенного пользователя
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Получаем URL из .env
 
   // Загружаем пользователей с сервера при первом рендере
   useEffect(() => {
-    fetch(`${API_BASE_URL}/users`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/users`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Ошибка загрузки пользователей");
@@ -22,10 +30,16 @@ const App = () => {
       })
       .then((data) => setUsers(data))
       .catch((error) => console.error("Ошибка загрузки пользователей:", error));
-  }, [API_BASE_URL]);
+  }, []);
 
   // Сохранение пользователя (добавление или обновление)
-  const handleSaveUser = (updatedUser) => {
+  const handleSaveUser = (updatedUser: {
+    id?: number;
+    name: string;
+    surname: string;
+    email: string;
+    age: number;
+  }) => {
     if (!updatedUser.id) {
       fetch(`${API_BASE_URL}/users`, {
         method: "POST",
@@ -76,7 +90,7 @@ const App = () => {
   };
 
   // Удаление пользователя
-  const handleDeleteUser = (userId) => {
+  const handleDeleteUser = (userId: number) => {
     fetch(`${API_BASE_URL}/users/${userId}`, {
       method: "DELETE",
     })
@@ -96,7 +110,7 @@ const App = () => {
       name: "",
       surname: "",
       email: "",
-      age: "",
+      age: 0,
     });
   };
 
@@ -105,7 +119,10 @@ const App = () => {
       <button className="add-user" onClick={handleAddUser}>
         Добавить пользователя
       </button>
-      <UserList users={users} onSelect={setSelectedUser} />
+      <UserList
+        users={users}
+        onSelect={(user) => setSelectedUser(user)} // Передаём полный объект пользователя
+      />
       {selectedUser && (
         <UserDetails
           user={selectedUser}

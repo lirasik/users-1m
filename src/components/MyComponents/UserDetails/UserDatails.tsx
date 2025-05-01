@@ -3,7 +3,21 @@ import userIcon from "../../../assets/user-icon.svg";
 import "../styles.scss"; // Подключаем стили, если нужно
 
 // Компонент для отображения деталей пользователя
-const UserDetails = ({ user, onSave, onDelete }) => {
+const UserDetails = ({
+  user,
+  onSave,
+  onDelete,
+}: {
+  user: {
+    id?: number;
+    name: string;
+    surname: string;
+    email: string;
+    age: number;
+  };
+  onSave: (user: any) => void;
+  onDelete: (id: number) => void;
+}) => {
   const [form, setForm] = useState(user);
 
   // Обновляем форму, если выбранный пользователь изменился
@@ -41,11 +55,19 @@ const UserDetails = ({ user, onSave, onDelete }) => {
         <input
           type="text"
           value={form.age}
-          onChange={(e) => setForm({ ...form, age: e.target.value })}
+          onChange={
+            (e) => setForm({ ...form, age: Number(e.target.value) }) // Преобразуем строку в число
+          }
         />
         <button onClick={() => onSave(form)}>Сохранить</button>
         <button
-          onClick={() => onDelete(user.id)}
+          onClick={() => {
+            if (user.id !== undefined) {
+              onDelete(user.id);
+            } else {
+              console.error("Ошибка: ID пользователя отсутствует");
+            }
+          }}
           style={{ marginLeft: "10px", background: "red" }}
         >
           Удалить
