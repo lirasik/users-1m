@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import userIcon from "../../../assets/user-icon.svg";
 import "../styles.scss"; // Подключаем стили, если нужно
+import "./UserDatails.css"; // Стили для компонента
 
 // Компонент для отображения деталей пользователя
 const UserDetails = ({

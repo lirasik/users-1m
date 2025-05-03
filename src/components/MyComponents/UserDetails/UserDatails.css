@@ -1,0 +1,25 @@
+.user-details {
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.user-details img {
+  width: 100px;
+  height: 100px;
+}
+.user-details .fullName {
+  display: flex;
+  gap: 20px;
+}
+.user-details .surname,
+.user-details .name {
+  width: 100%;
+  max-width: 394px;
+}
+.user-details .surname input,
+.user-details .name input {
+  width: auto;
+  max-width: 374px;
+} /*# sourceMappingURL=UserDatails.css.map */
